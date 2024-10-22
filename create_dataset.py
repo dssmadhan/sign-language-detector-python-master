@@ -2,6 +2,10 @@ import os
 import pickle
 import mediapipe as mp
 import cv2
+import warnings
+
+# Suppress the specific warning from google.protobuf about the deprecated method
+warnings.filterwarnings("ignore", category=UserWarning, module='google.protobuf')
 
 # Initialize MediaPipe Hands and Drawing utilities
 mp_hands = mp.solutions.hands

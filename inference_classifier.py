@@ -4,7 +4,8 @@ import mediapipe as mp
 import numpy as np
 
 # Load the trained model
-model_dict = pickle.load(open('./model.p', 'rb'))
+with open('./model.p', 'rb') as f:
+    model_dict = pickle.load(f)
 model = model_dict['model']
 
 # Initialize video capture
@@ -20,25 +21,28 @@ mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 
-hands = mp_hands.Hands(static_image_mode=False, min_detection_confidence=0.3)
+hands = mp_hands.Hands(static_image_mode=False, min_detection_confidence=0.3, min_tracking_confidence=0.5)
 
-# Label mapping
-labels_dict = {0: 'A', 1: 'B', 2: 'C'}
+# Label mapping for 10 classes (A-J)
+labels_dict = {
+    0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'I',
+    5: 'Y', 6: 'love you', 7: 'hi', 8: '😀', 9: '♥️'
+}
 
 while True:
-    data_aux = []
-    x_ = []
-    y_ = []
-
-    # Capture frame-by-frame
-    ret, frame = cap.read()
-
-    # Check if frame was captured successfully
-    if not ret or frame is None:
-        print("Warning: Failed to capture frame.")
-        continue
-
     try:
+        data_aux = []
+        x_ = []
+        y_ = []
+
+        # Capture frame-by-frame
+        ret, frame = cap.read()
+
+        # Check if frame was captured successfully
+        if not ret or frame is None:
+            print("Warning: Failed to capture frame.")
+            continue
+
         # Get frame dimensions
         H, W, _ = frame.shape
 
@@ -49,6 +53,7 @@ while True:
         results = hands.process(frame_rgb)
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
+                # Draw the landmarks on the frame
                 mp_drawing.draw_landmarks(
                     frame,  # image to draw
                     hand_landmarks,  # model output
@@ -58,18 +63,15 @@ while True:
                 )
 
             for hand_landmarks in results.multi_hand_landmarks:
-                for i in range(len(hand_landmarks.landmark)):
-                    x = hand_landmarks.landmark[i].x
-                    y = hand_landmarks.landmark[i].y
-
+                for landmark in hand_landmarks.landmark:
+                    x = landmark.x
+                    y = landmark.y
                     x_.append(x)
                     y_.append(y)
 
-                for i in range(len(hand_landmarks.landmark)):
-                    x = hand_landmarks.landmark[i].x
-                    y = hand_landmarks.landmark[i].y
-                    data_aux.append(x - min(x_))
-                    data_aux.append(y - min(y_))
+                for landmark in hand_landmarks.landmark:
+                    data_aux.append(landmark.x - min(x_))
+                    data_aux.append(landmark.y - min(y_))
 
             # Calculate bounding box for the hand
             x1 = int(min(x_) * W) - 10
@@ -88,16 +90,15 @@ while True:
         else:
             print("No hand landmarks detected.")
 
+        # Display the resulting frame
+        cv2.imshow('frame', frame)
+
+        # Break the loop on 'q' key press
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
     except Exception as e:
-        print(f"Error during processing: {e}")
-        continue
-
-    # Display the resulting frame
-    cv2.imshow('frame', frame)
-
-    # Break the loop on 'q' key press
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+        print(f"Error: {e}")
 
 # When everything is done, release the capture and close windows
 cap.release()

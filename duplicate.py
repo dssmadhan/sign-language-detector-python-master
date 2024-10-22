@@ -48,8 +48,11 @@ mp_drawing_styles = mp.solutions.drawing_styles
 hands = mp_hands.Hands(static_image_mode=False, min_detection_confidence=0.3)
 
 # Label mapping
-labels_dict = {0: "hi", 1: 'B', 2: 'C'}
-
+# labels_dict = {0: "hi", 1: 'B', 2: 'C'}
+labels_dict = {
+    0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'I',
+    5: 'Y', 6: 'love you', 7: 'hi', 8: '😀', 9: '♥️'
+}
 # Initialize Streamlit session state for storing detected characters
 if 'detected_characters' not in st.session_state:
     st.session_state.detected_characters = []
