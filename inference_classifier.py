@@ -23,10 +23,10 @@ mp_drawing_styles = mp.solutions.drawing_styles
 
 hands = mp_hands.Hands(static_image_mode=False, min_detection_confidence=0.3, min_tracking_confidence=0.5)
 
-# Label mapping for 10 classes (A-J)
+# Label mapping for 16 classes (A-P)
 labels_dict = {
-    0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'I',
-    5: 'Y', 6: 'love you', 7: 'hi', 8: '😀', 9: '♥️'
+    0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'I', 5: 'J', 6: 'R', 7: 'S',
+    8: 'V', 9: 'Y', 10: 'love you', 11: 'Hi', 12: '😀', 13: '♥️', 14: '.', 15: ' '
 }
 
 while True:
@@ -63,12 +63,12 @@ while True:
                 )
 
             for hand_landmarks in results.multi_hand_landmarks:
+                # Collect x and y coordinates
                 for landmark in hand_landmarks.landmark:
-                    x = landmark.x
-                    y = landmark.y
-                    x_.append(x)
-                    y_.append(y)
+                    x_.append(landmark.x)
+                    y_.append(landmark.y)
 
+                # Normalize data for model input
                 for landmark in hand_landmarks.landmark:
                     data_aux.append(landmark.x - min(x_))
                     data_aux.append(landmark.y - min(y_))
@@ -81,7 +81,12 @@ while True:
 
             # Make a prediction using the model
             prediction = model.predict([np.asarray(data_aux)])
-            predicted_character = labels_dict[int(prediction[0])]
+
+            # Validate predicted index
+            if int(prediction[0]) in labels_dict:
+                predicted_character = labels_dict[int(prediction[0])]
+            else:
+                predicted_character = "Unknown"
 
             # Draw the bounding box and the predicted character
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 0), 4)
