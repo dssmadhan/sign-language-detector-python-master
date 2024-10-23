@@ -153,58 +153,11 @@ def submit_to_ollama():
     else:
         st.error(f"API request failed with status code {response.status_code}")
 
-# Main function for the Streamlit app
+# Main function for the Streamlit appdef main():
 def main():
     st.title("Sign Language Detector and Gesture Recognition")
     
-    # Add sections for running projects
-    st.header("Project Management")
-
-    # Presentation Project
-    col1, col2 = st.columns(2)
-    with col1:
-        button_style = """
-        <style>
-        .stButton > button {
-            background-color: #88217a;
-            color: white;
-            padding: 10px 24px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border: none;
-            border-radius: 12px;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .stButton > button:hover {
-            background-color: white;
-            color: #88217a;
-        }
-        </style>
-        """
-        st.markdown(button_style, unsafe_allow_html=True)
-        
-        if st.button("Run Presentation Project"):
-            st.write("Running Presentation Project...")
-            run_presentation_project()
-
-    # Mouse Control Project
-    col3, col4 = st.columns(2)
-    with col3:
-        if st.button("Run Mouse Control Project"):
-            st.write("Running Mouse Control Project...")
-            run_mouse_project()
-
-    # Volume Control Project
-    col5, col6 = st.columns(2)
-    with col5:
-        if st.button("Run Volume Control Project"):
-            st.write("Running Volume Control Project...")
-            run_volume_project()
-
+    # Hand Gesture Recognition
     st.header("Hand Gesture Recognition")
     
     # Start capturing the video feed from the webcam
@@ -259,6 +212,53 @@ def main():
 
     cv2.destroyAllWindows()
 
+    # Project Management Section
+    st.header("Project Management")
+
+    # Presentation Project
+    col1, col2 = st.columns(2)
+    with col1:
+        button_style = """
+        <style>
+        .stButton > button {
+            background-color: #88217a;
+            color: white;
+            padding: 10px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .stButton > button:hover {
+            background-color: white;
+            color: #88217a;
+        }
+        </style>
+        """
+        st.markdown(button_style, unsafe_allow_html=True)
+        
+        if st.button("Run Presentation Project"):
+            st.write("Running Presentation Project...")
+            run_presentation_project()
+
+    # Mouse Control Project
+    col3, col4 = st.columns(2)
+    with col3:
+        if st.button("Run Mouse Control Project"):
+            st.write("Running Mouse Control Project...")
+            run_mouse_project()
+
+    # Volume Control Project
+    col5, col6 = st.columns(2)
+    with col5:
+        if st.button("Run Volume Control Project"):
+            st.write("Running Volume Control Project...")
+            run_volume_project()
+
 if __name__ == "__main__":
     main()
- 
