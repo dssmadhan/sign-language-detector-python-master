@@ -5,13 +5,13 @@ import os
 import HandTrackingModule as htm
 
 def set_volume_mac(level):
-    # Ensure the volume level is between 0 and 100 (for maximum volume on Mac)
-    level = min(max(level, 0), 100)  # Clamp the volume between 0 and 100
+    
+    level = min(max(level, 0), 100)  
     os.system(f"osascript -e 'set volume output volume {level}'")
 
 def main():
     wCam, hCam = 640, 480
-    cap = cv2.VideoCapture(0)  # Use 0 for default camera or 1 for the second camera
+    cap = cv2.VideoCapture(0)  
     cap.set(3, wCam)
     cap.set(4, hCam)
     pTime = 0
@@ -32,13 +32,13 @@ def main():
             if 250 < area < 1000:
                 length, img, lineInfo = detector.findDistance(4, 8, img)
                 volBar = np.interp(length, [50, 200], [400, 150])
-                volPer = np.interp(length, [50, 200], [0, 100])  # Scale to 0-100%
+                volPer = np.interp(length, [50, 200], [0, 100])  
                 smoothness = 10
                 volPer = smoothness * round(volPer / smoothness)
 
                 fingers = detector.fingersUp()
                 if not fingers[4]:
-                    # Set volume to 0-100% range for macOS
+                    
                     set_volume_mac(volPer)
                     cv2.circle(img, (lineInfo[4], lineInfo[5]), 15, (0, 255, 0), cv2.FILLED)
                     colorVol = (0, 255, 0)
@@ -55,7 +55,14 @@ def main():
         cv2.putText(img, f'FPS: {int(fps)}', (40, 50), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 0, 0), 3)
 
         cv2.imshow("Img", img)
-        cv2.waitKey(1)
+
+        
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            print("Terminating program with 'q' key.")
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()

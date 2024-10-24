@@ -41,14 +41,14 @@ while True:
         cx, cy = hand["center"]
         lmList = hand['lmList']
 
-        # Constrain values for easier drawing
+        
         xVal = int(np.interp(lmList[8][0], [width // 2, width], [0, width]))
         yVal = int(np.interp(lmList[8][1], [150, height - 150], [0, height]))
         indexFinger = xVal, yVal
 
-        if cy <= gestureThreshold:  # If hand is at the height of the face
+        if cy <= gestureThreshold:  
             annotationStart = False
-            # Gesture 1 - Left
+            
             if fingers == [1, 0, 0, 0, 0]:
                 annotationStart = False
                 print("Left")
@@ -58,7 +58,7 @@ while True:
                     annotationNumber = 0
                     imgNumber -= 1
 
-            # Gesture 2 - Right
+            
             if fingers == [0, 0, 0, 0, 1]:
                 print("Right")
                 if imgNumber < len(pathImages) - 1:
@@ -68,12 +68,12 @@ while True:
                     annotationStart = False
                     imgNumber += 1
 
-        # Gesture 3 - Show Pointer
+        
         if fingers == [0, 1, 1, 0, 0]:
             cv2.circle(imgCurrent, indexFinger, 12, (0, 255, 0), cv2.FILLED)
             annotationStart = False
 
-        # Gesture 4 - Draw Pointer
+        
         if fingers == [0, 1, 0, 0, 0]:
             if annotationStart is False:
                 annotationStart = True
@@ -85,7 +85,7 @@ while True:
         else:
             annotationStart = False
 
-        # Gesture 5 - Erase
+        
         if fingers == [0, 1, 1, 1, 0]:
             if annotations:
                 if annotationStart >= 0:

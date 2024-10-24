@@ -201,15 +201,18 @@ def main():
                     st.session_state.detected_characters.append(predicted_character)
                     st.session_state.last_detection_time = current_time
 
+                    # If the detected character is ".", automatically submit the detected characters
+                    if predicted_character == ".":
+                        st.write("Detected '.' gesture. Submitting detected characters...")
+                        run = False  # Stop the camera
+                        frame_placeholder.empty()
+                        submit_to_ollama()
+
                 detected_characters_placeholder.text(' '.join(st.session_state.detected_characters))
 
             cap.release()
 
     cv2.destroyAllWindows()
-
-    # Submit button to manually submit the detected characters
-    if st.button("Submit Detected Characters to Ollama"):
-        submit_to_ollama()
 
     # Project Management Section
     st.header("Project Management")

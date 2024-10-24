@@ -3,20 +3,20 @@ import cv2
 import os
 import numpy as np
 
-# Parameters
+
 width, height = 1280, 720
 gestureThreshold = 300
 folderPath = os.path.abspath(os.path.join(os.path.dirname(__file__), "pp"))
 
-# Camera Setup
+
 cap = cv2.VideoCapture(0)
 cap.set(3, width)
 cap.set(4, height)
 
-# Hand Detector
+
 detectorHand = HandDetector(detectionCon=0.8, maxHands=1)
 
-# Variables
+
 imgList = []
 delay = 25
 buttonPressed = False
@@ -27,13 +27,13 @@ delayCounter = 0
 annotations = [[]]
 annotationNumber = -1
 annotationStart = False
-hs, ws = int(120 * 1), int(213 * 1)  # width and height of small image
+hs, ws = int(120 * 1), int(213 * 1)  
 
-# Debugging prints
+
 print(f"Current working directory: {os.getcwd()}")
 print(f"Resolved path for 'pp' folder: {folderPath}")
 
-# Get list of presentation images
+
 try:
     pathImages = sorted(os.listdir(folderPath), key=len)
     print(f"Images found in 'pp': {pathImages}")
@@ -42,30 +42,30 @@ except FileNotFoundError:
     exit()
 
 while True:
-    # Get image frame
+    
     success, img = cap.read()
     img = cv2.flip(img, 1)
     pathFullImage = os.path.join(folderPath, pathImages[imgNumber])
     imgCurrent = cv2.imread(pathFullImage)
 
-    # Find the hand and its landmarks
-    hands, img = detectorHand.findHands(img)  # with draw
-    # Draw Gesture Threshold line
+    
+    hands, img = detectorHand.findHands(img)  
+    
     cv2.line(img, (0, gestureThreshold),
              (width, gestureThreshold), (0, 255, 0), 10)
 
-    if hands and buttonPressed is False:  # If hand is detected
+    if hands and buttonPressed is False:  
         hand = hands[0]
         cx, cy = hand["center"]
-        lmList = hand["lmList"]  # List of 21 Landmark points
-        fingers = detectorHand.fingersUp(hand)  # List of which fingers are up
+        lmList = hand["lmList"]  
+        fingers = detectorHand.fingersUp(hand)  
 
-        # Constrain values for easier drawing
+        
         xVal = int(np.interp(lmList[8][0], [width // 2, width], [0, width]))
         yVal = int(np.interp(lmList[8][1], [150, height - 150], [0, height]))
         indexFinger = xVal, yVal
 
-        if cy <= gestureThreshold:  # If hand is at the height of the face
+        if cy <= gestureThreshold:  
             annotationStart = False
             if fingers == [1, 0, 0, 0, 0]:
                 print("Left")
